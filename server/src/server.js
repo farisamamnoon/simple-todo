@@ -3,8 +3,10 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const ApiError = require("./utils/ApiError");
 const errorHandler = require("./middlewares/error-handler.middleware");
-const authRouter = require("./routers/auth-router");
-const tasksRouter = require("./routers/task-router");
+const authRouter = require("./routers/auth.router");
+const tasksRouter = require("./routers/task.router");
+const db = require("./utils/db");
+const UserModel = require("./models/user.model");
 
 require("dotenv").config();
 const app = express();
@@ -25,6 +27,7 @@ app.use((req, res, next) => {
 // Base error handler
 app.use(errorHandler);
 
-app.listen(process.env.PORT, () => {
+app.listen(process.env.PORT, async () => {
+  await db.sync();
   console.log(`Your server is listening to ${process.env.PORT}`);
 });
