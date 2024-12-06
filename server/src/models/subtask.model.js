@@ -13,7 +13,6 @@ const SubtaskModel = db.define("Subtasks", {
   },
   done: {
     type: DataTypes.BOOLEAN,
-    allowNull: false,
     defaultValue: false,
   },
 });

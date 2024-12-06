@@ -5,8 +5,9 @@ const ApiError = require("./utils/ApiError");
 const errorHandler = require("./middlewares/error-handler.middleware");
 const authRouter = require("./routers/auth.router");
 const tasksRouter = require("./routers/task.router");
-const db = require("./utils/db");
+const dbInit = require("./utils/initDb.js");
 const UserModel = require("./models/user.model");
+const { authenticate } = require("./middlewares/auth.middleware");
 
 require("dotenv").config();
 const app = express();
@@ -17,7 +18,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use("/api/auth", authRouter);
-app.use("/api/tasks", tasksRouter);
+app.use("/api/tasks", authenticate, tasksRouter);
 
 // 404 not found error handler
 app.use((req, res, next) => {
@@ -28,6 +29,6 @@ app.use((req, res, next) => {
 app.use(errorHandler);
 
 app.listen(process.env.PORT, async () => {
-  await db.sync();
+  await dbInit();
   console.log(`Your server is listening to ${process.env.PORT}`);
 });

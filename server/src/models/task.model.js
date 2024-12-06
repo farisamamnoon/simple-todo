@@ -20,7 +20,6 @@ const TaskModel = db.define("Tasks", {
   },
   done: {
     type: DataTypes.BOOLEAN,
-    allowNull: false,
     defaultValue: false,
   },
 });
