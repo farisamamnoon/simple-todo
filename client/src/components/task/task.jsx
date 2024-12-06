@@ -1,10 +1,16 @@
-import { useContext } from "react";
+import { useState } from "react";
 import { formatDate } from "../../utils/formatDate";
 import { SubTask } from "./subtask";
-import { DispatchContext } from "../../pages/dash";
 
-export const Task = ({ id, title, description, dueDate, subTasks, done }) => {
-  const setData = useContext(DispatchContext);
+export const Task = ({
+  id,
+  title,
+  description,
+  dueDate,
+  subTasks,
+  done: initDone,
+}) => {
+  const [done, setDone] = useState(initDone);
 
   return (
     <div className="bg-pink-200/80 rounded-lg shadow-md p-8 flex flex-col gap-2">
@@ -14,17 +20,7 @@ export const Task = ({ id, title, description, dueDate, subTasks, done }) => {
           className={`bg-pink-900 px-2 py-1 text-pink-100 rounded-md shadow ${
             done && "bg-opacity-20"
           } ${!done && "hover:bg-opacity-80"}`}
-          // onClick={() =>
-          //   setData((prev) => {
-          //     const oldTasks = prev;
-          //     const targetTask = oldTasks.find((task) => task.id === id);
-          //     const taskStatus = targetTask.done;
-          //     targetTask.done = !taskStatus;
-          //     console.log([...prev, targetTask]);
-
-          //     return [...prev, targetTask];
-          //   })
-          // }
+          onClick={() => setDone((val) => !val)}
         >
           {done ? "Completed" : "Mark Done"}
         </button>
@@ -33,7 +29,7 @@ export const Task = ({ id, title, description, dueDate, subTasks, done }) => {
         Due on {formatDate(dueDate)}
       </p>
       <p>{description}</p>
-      <ul className="">
+      <ul className="mt-2">
         {subTasks.map((subTask) => (
           <SubTask {...subTask} key={subTask.id} />
         ))}

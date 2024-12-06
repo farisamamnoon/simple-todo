@@ -1,5 +1,3 @@
-import { Badge, BadgeCheck } from "lucide-react";
-import { createContext, useState } from "react";
 import { Task } from "../../components/task/task";
 
 const initData = [
@@ -37,19 +35,14 @@ const initData = [
     ],
   },
 ];
-export const DispatchContext = createContext(() => {});
 
 export const Dashboard = () => {
-  const [data, setData] = useState(initData);
-
   return (
     <div className="bg-primary-gradient w-screen min-h-screen py-10 px-10">
       <div className="w-full md:w-1/2 lg:1/4 mx-auto flex flex-col gap-8 ">
-        <DispatchContext.Provider value={setData}>
-          {data.map((task) => (
-            <Task {...task} key={task.id} />
-          ))}
-        </DispatchContext.Provider>
+        {initData.map((task) => (
+          <Task {...task} key={task.id} />
+        ))}
       </div>
     </div>
   );
