@@ -23,12 +23,13 @@ const login = async (req, res, next) => {
   try {
     const { userName, password } = req.body;
 
-    const { dataValues: user } = await UserModel.findOne({
+    const result = await UserModel.findOne({
       where: { userName },
     });
-    if (!user) {
-      throw new ApiError(404, "User with the email not found");
+    if (!result) {
+      throw new ApiError(404, "User not found");
     }
+    const { dataValues: user } = result;
 
     const isMatch = bcrypt.compareSync(password, user.password);
 
@@ -38,14 +39,17 @@ const login = async (req, res, next) => {
 
     const accessToken = jwt.sign(user, process.env.JWT_SECRET_KEY);
 
-    res.status(200).json({
-      success: true,
-      message: "User successfully created",
-      data: {
-        accessToken,
-        user,
-      },
-    });
+    res
+      .cookie("accessToken", accessToken)
+      .status(200)
+      .json({
+        success: true,
+        message: "User logged in successfully",
+        data: {
+          accessToken,
+          user,
+        },
+      });
   } catch (error) {
     console.error(error);
 
@@ -67,14 +71,18 @@ const register = async (req, res, next) => {
     });
 
     const accessToken = jwt.sign(user, process.env.JWT_SECRET_KEY);
-    res.status(200).json({
-      success: true,
-      message: "Login successfull",
-      data: {
-        accessToken,
-        user,
-      },
-    });
+
+    res
+      .cookie("accessToken", accessToken)
+      .status(200)
+      .json({
+        success: true,
+        message: "Login successfull",
+        data: {
+          accessToken,
+          user,
+        },
+      });
   } catch (error) {
     console.error(error);
 

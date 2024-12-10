@@ -1,13 +1,37 @@
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { registerSchema, useSetUser } from "../../utils/auth";
+import { useMutation } from "@tanstack/react-query";
+import { request } from "../../utils/request";
+import { useNotification } from "../../components/notification";
+import { Notification } from "../../components/notification";
+import { useEffect } from "react";
 
 export const Register = () => {
-  const navigate = useNavigate();
-  const { register, handleSubmit } = useForm();
+  const { notify, ...notification } = useNotification();
+  const setUser = useSetUser()
+
+  const { mutate, isPending, isError, error } = useMutation({
+    mutationFn: (values) => request("auth/register", "POST", values),
+    onSuccess: setUser,
+  });
+
+  const { register, handleSubmit, formState } = useForm({
+    resolver: zodResolver(registerSchema),
+  });
+
   const submitHandler = (values) => {
-    console.log(values);
-    navigate("/");
+    mutate(values);
+    localStorage.setItem("");
   };
+
+  useEffect(() => {
+    if (isError) {
+      notify(error.message);
+    }
+  }, [isError]);
+
   return (
     <div className="bg-primary-gradient w-screen h-screen grid place-content-center">
       <div className="bg-white p-16 rounded-md shadow-xl">
@@ -21,10 +45,13 @@ export const Register = () => {
           <div className="flex flex-col gap-4">
             <label className="text-blue-950">Username:</label>
             <input
-              {...register("username")}
+              {...register("userName")}
               placeholder="Enter your username"
               className="bg-inherit shadow-lg px-4 py-2 text-blue-950 rounded-md"
             />
+            <p className="text-red-500 font-semibold">
+              {formState.errors?.userName?.message}
+            </p>
           </div>
           <div className="flex flex-col gap-4">
             <label className="text-blue-950">Password:</label>
@@ -34,26 +61,34 @@ export const Register = () => {
               placeholder="Enter your password"
               className="bg-inherit shadow-lg px-4 py-2 text-blue-950 rounded-md"
             />
+            <p className="text-red-500 font-semibold">
+              {formState.errors?.password?.message}
+            </p>
           </div>
           <div className="flex flex-col gap-4">
             <label className="text-blue-950">Password:</label>
             <input
-              {...register("confirPassword")}
+              {...register("confirmPassword")}
               type="password"
               placeholder="Confirm your password"
               className="bg-inherit shadow-lg px-4 py-2 text-blue-950 rounded-md"
             />
+            <p className="text-red-500 font-semibold">
+              {formState.errors?.confirmPassword?.message}
+            </p>
           </div>
           <button
             type="submit"
-            className="bg-primary px-4 py-2 text-white rounded-md mt-8"
+            className="bg-primary px-4 py-2 text-white rounded-md mt-8 hover:bg-opacity-90"
+            disabled={isPending}
           >
-            Create Account
+            {isPending ? "Submitting" : "Create Account"}
           </button>
           <Link to="/auth/login" className="text-center text-gray-500">
             Click here if you already have an account
           </Link>
         </form>
+        <Notification {...notification} />
       </div>
     </div>
   );

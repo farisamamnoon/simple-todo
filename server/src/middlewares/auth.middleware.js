@@ -4,12 +4,12 @@ const ApiError = require("../utils/ApiError");
 
 const authenticate = async (req, res, next) => {
   try {
-    let token = req.headers["authorization"];
+    let token = req.cookies.accessToken;
+    console.log(req.cookies)
 
     if (!token) {
       throw new ApiError(403, "No authentication provided");
     }
-    token = token.split(" ")[1];
 
     const user = jwt.verify(token, process.env.JWT_SECRET_KEY);
 
