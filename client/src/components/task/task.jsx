@@ -9,7 +9,7 @@ export const Task = ({
   title,
   description,
   dueDate,
-  subTasks,
+  subtasks,
   done: initDone,
 }) => {
   const [done, setDone] = useState(initDone);
@@ -38,8 +38,8 @@ export const Task = ({
       </p>
       <p>{description}</p>
       <ul className="mt-2">
-        {subTasks.map((subTask) => (
-          <SubTask {...subTask} key={subTask.id} />
+        {subtasks.map((subtask) => (
+          <SubTask {...subtask} key={subtask.id} />
         ))}
       </ul>
       {deleteTask.toggle && (

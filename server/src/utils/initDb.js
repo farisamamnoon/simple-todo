@@ -13,7 +13,10 @@ const dbInit = () => {
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
   });
-  TaskModel.hasMany(SubtaskModel, { foreignKey: { allowNull: false } });
+  TaskModel.hasMany(SubtaskModel, {
+    foreignKey: { allowNull: false },
+    as: "subtasks",
+  });
 
   return db.sync();
 };

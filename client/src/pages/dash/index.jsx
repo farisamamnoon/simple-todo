@@ -45,13 +45,7 @@ const initData = [
 ];
 
 export const Dashboard = () => {
-  const [addModal, setAddModal] = useState(false);
-  const {
-    // data: { data },
-    isPending,
-    isError,
-    error,
-  } = useQuery({
+  const { data, isPending, isError, error, refetch } = useQuery({
     queryKey: ["tasks"],
     queryFn: () => request("tasks"),
   });
@@ -60,22 +54,16 @@ export const Dashboard = () => {
   if (isError) return <Error error={error} />;
 
   return (
-    <div className="bg-primary-gradient w-screen min-h-screen py-10 px-10">
-      {!addModal && <div
-        className="bg-pink-200 text-pink-900 w-max rounded-b-lg fixed -top-2 mx-auto pt-4 p-2 left-1/2 -translate-x-1/2 hover:translate-y-1 transition-transform"
-        onClick={() => setAddModal(true)}
-      >
-        <Plus strokeWidth={3} size={40} />
-      </div>}
+    <div className="bg-primary-gradient bg-fixed bg-no-repeat min-w-screen min-h-screen py-20 px-10">
       <div className="w-full md:w-1/2 lg:1/4 mx-auto flex flex-col gap-8">
-        {/* {data === null ||
-          data === undefined ||
-          (!Array.isArray(data) && <p>No Tasks...Try creating one</p>)}
-        {data.map((task) => (
+        {data.data === null ||
+          data.data === undefined ||
+          (!Array.isArray(data.data) && <p>No Tasks...Try creating one</p>)}
+        {data.data.map((task) => (
           <Task {...task} key={task.id} />
-        ))} */}
+        ))}
       </div>
-      {addModal && <AddTask onClose={() => setAddModal(false)} />}
+      <AddTask />
     </div>
   );
 };

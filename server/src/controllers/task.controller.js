@@ -4,7 +4,7 @@ const UserModel = require("../models/user.model");
 
 const addTask = async (req, res, next) => {
   try {
-    const { title, description, dueDate, done, subTasks } = req.body;
+    const { title, description, dueDate, done, subtasks } = req.body;
     const { user } = req;
     const {
       dataValues: { id },
@@ -15,9 +15,10 @@ const addTask = async (req, res, next) => {
       done,
       UserId: user.id,
     });
-    if (subTasks.length > 0) {
+
+    if (subtasks.length > 0) {
       await Promise.all(
-        subTasks.map(({ title, done }) =>
+        subtasks.map(({ title, done }) =>
           SubtaskModel.create({ title, done, TaskId: id })
         )
       );
@@ -38,7 +39,10 @@ const getAllTasks = async (req, res, next) => {
     const user = req.user;
     const result = await TaskModel.findAll({
       where: { UserId: user.id },
-      include: SubtaskModel,
+      include: {
+        model: SubtaskModel,
+        as: "subtasks",
+      },
     });
 
     res.status(200).json({
