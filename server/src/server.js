@@ -8,6 +8,7 @@ const tasksRouter = require("./routers/task.router");
 const dbInit = require("./utils/initDb.js");
 const UserModel = require("./models/user.model");
 const { authenticate } = require("./middlewares/auth.middleware");
+const subtaskRouter = require("./routers/subtask.router.js");
 
 require("dotenv").config();
 const app = express();
@@ -25,6 +26,7 @@ app.use(bodyParser.json());
 
 app.use("/api/auth", authRouter);
 app.use("/api/tasks", authenticate, tasksRouter);
+app.use("/api/subtasks", authenticate, subtaskRouter);
 
 // 404 not found error handler
 app.use((req, res, next) => {

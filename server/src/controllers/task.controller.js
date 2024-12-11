@@ -1,6 +1,7 @@
 const SubtaskModel = require("../models/subtask.model");
 const TaskModel = require("../models/task.model");
 const UserModel = require("../models/user.model");
+const { delay } = require("../utils/delay");
 
 const addTask = async (req, res, next) => {
   try {
@@ -56,14 +57,17 @@ const getAllTasks = async (req, res, next) => {
   }
 };
 
-const markTaskDone = async (req, res, next) => {
+const updateTask = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { done } = req.body;
-    await TaskModel.update({ done }, { where: { id } });
+    const { title, description, dueDate, done } = req.body;
+    await TaskModel.update(
+      { title, description, dueDate, done },
+      { where: { id } }
+    );
     res.status(200).json({
       success: true,
-      message: "Marked task done",
+      message: "Updated task",
     });
   } catch (error) {
     next(error);
@@ -84,19 +88,7 @@ const addSubTask = async (req, res, next) => {
   }
 };
 
-const markSubtaskDone = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const { done } = req.body;
-    await SubtaskModel.update({ done }, { where: { id } });
-    res.status(200).json({
-      success: true,
-      message: "Marked subtask done",
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+
 
 const deleteTask = async (req, res, next) => {
   try {
@@ -114,8 +106,7 @@ const deleteTask = async (req, res, next) => {
 module.exports = {
   addTask,
   getAllTasks,
-  markTaskDone,
+  updateTask,
   addSubTask,
   deleteTask,
-  markSubtaskDone,
 };
