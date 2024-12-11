@@ -39,17 +39,14 @@ const login = async (req, res, next) => {
 
     const accessToken = jwt.sign(user, process.env.JWT_SECRET_KEY);
 
-    res
-      .cookie("accessToken", accessToken)
-      .status(200)
-      .json({
-        success: true,
-        message: "User logged in successfully",
-        data: {
-          accessToken,
-          user,
-        },
-      });
+    res.cookie("accessToken", accessToken).status(200).json({
+      success: true,
+      message: "User logged in successfully",
+      data: {
+        accessToken,
+        user,
+      },
+    });
   } catch (error) {
     console.error(error);
 
@@ -72,17 +69,14 @@ const register = async (req, res, next) => {
 
     const accessToken = jwt.sign(user, process.env.JWT_SECRET_KEY);
 
-    res
-      .cookie("accessToken", accessToken)
-      .status(200)
-      .json({
-        success: true,
-        message: "Login successfull",
-        data: {
-          accessToken,
-          user,
-        },
-      });
+    res.cookie("accessToken", accessToken).status(200).json({
+      success: true,
+      message: "Login successfull",
+      data: {
+        accessToken,
+        user,
+      },
+    });
   } catch (error) {
     console.error(error);
 
@@ -93,4 +87,15 @@ const register = async (req, res, next) => {
   }
 };
 
-module.exports = { getUser, login, register };
+const logout = (req, res) => {
+  res
+    .cookie("accessToken", "", {
+      expires: new Date(0),
+    })
+    .json({
+      success: true,
+      message: "User logged out",
+    });
+};
+
+module.exports = { getUser, login, register, logout };
