@@ -1,16 +1,16 @@
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const ApiError = require("./utils/ApiError");
-const errorHandler = require("./middlewares/error-handler.middleware");
-const authRouter = require("./routers/auth.router");
-const tasksRouter = require("./routers/task.router");
+const ApiError = require("./utils/ApiError.js");
+require("dotenv").config();
+const errorHandler = require("./middlewares/error-handler.middleware.js");
+const authRouter = require("./routers/auth.router.js");
+const tasksRouter = require("./routers/task.router.js");
 const dbInit = require("./utils/initDb.js");
-const UserModel = require("./models/user.model");
-const { authenticate } = require("./middlewares/auth.middleware");
+const UserModel = require("./models/user.model.js");
+const { authenticate } = require("./middlewares/auth.middleware.js");
 const subtaskRouter = require("./routers/subtask.router.js");
 
-require("dotenv").config();
 const app = express();
 
 app.use(
