@@ -19,20 +19,15 @@ export const registerSchema = z
 
 export const useSetUser = () => {
   const navigate = useNavigate();
-  return (response) => {
-    localStorage.setItem("accessToken", response.data.accessToken);
+  return () => {
     navigate("/");
   };
 };
 
 export const ProtectedRoute = ({ children }) => {
-  const jwt = localStorage.getItem("accessToken");
   const { data, isPending, isError } = useQuery({
     queryKey: ["user"],
-    queryFn: () =>
-      request("auth/user", "GET", null, {
-        headers: { authorization: `Bearer ${jwt}` },
-      }),
+    queryFn: () => request("auth/user", "GET"),
   });
 
   if (isPending) {

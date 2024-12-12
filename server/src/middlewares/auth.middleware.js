@@ -5,7 +5,7 @@ const ApiError = require("../utils/ApiError");
 const authenticate = async (req, res, next) => {
   try {
     let token =
-      req.cookies.accessToken || req.headers["authorization"].split(" ")[1];
+      req.cookies.accessToken || req.headers["authorization"]?.split(" ")[1];
 
     if (!token) {
       throw new ApiError(403, "No authentication provided");
