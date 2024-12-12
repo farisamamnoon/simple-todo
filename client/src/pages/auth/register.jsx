@@ -23,7 +23,6 @@ export const Register = () => {
 
   const submitHandler = (values) => {
     mutate(values);
-    localStorage.setItem("");
   };
 
   useEffect(() => {
