@@ -1,5 +1,4 @@
 export async function request(route, method = "GET", data, config) {
-  const jwt = localStorage.getItem("accessToken");
 
   let options = {
     method: method,
@@ -8,9 +7,6 @@ export async function request(route, method = "GET", data, config) {
       "Content-Type": "application/json",
     },
   };
-  if (jwt !== undefined || jwt !== null)  {
-    options.headers["authorization"] = jwt;
-  }
 
   if (config) {
     options = { ...options, ...config };

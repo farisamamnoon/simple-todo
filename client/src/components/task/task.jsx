@@ -1,4 +1,4 @@
-import { useEffect, useState, useOptimistic } from "react";
+import { useEffect, useState,  } from "react";
 import { formatDate } from "../../utils/formatDate";
 import { SubTask } from "./subtask";
 import { Trash } from "lucide-react";
@@ -17,7 +17,7 @@ export const Task = ({ task }) => {
   });
 
   //TODO: Somehow this is not working...
-  const [optiTask, addOptiTask] = useOptimistic(
+  const [optiTask, addOptiTask] = (
     task,
     (currTask, updatedTask) => {
       console.log({ ...currTask, ...updatedTask });

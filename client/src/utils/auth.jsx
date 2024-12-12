@@ -39,7 +39,6 @@ export const ProtectedRoute = ({ children }) => {
   }
 
   if (data.data.isAuthenticated) {
-    localStorage.setItem("accessToken", data.data.accessToken);
     return <>{children}</>;
   } else {
     return <Navigate to={"auth/login"} />;
