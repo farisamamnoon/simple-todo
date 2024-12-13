@@ -16,6 +16,7 @@ export const Dashboard = () => {
   const { mutate } = useMutation({
     mutationFn: () => request("auth/logout", "POST"),
     onSuccess: () => {
+      document.cookie = "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       queryClient.clear();
       navigate("/auth/login");
     },
