@@ -1,5 +1,4 @@
 const SubtaskModel = require("../models/subtask.model");
-const { delay } = require("../utils/delay");
 
 const updateSubtask = async (req, res, next) => {
   try {

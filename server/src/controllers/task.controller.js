@@ -30,7 +30,6 @@ const addTask = async (req, res, next) => {
       message: "Task created",
     });
   } catch (error) {
-    console.error(error);
     next(error);
   }
 };
@@ -44,6 +43,7 @@ const getAllTasks = async (req, res, next) => {
         model: SubtaskModel,
         as: "subtasks",
       },
+      order: [["done", "ASC"], ["dueDate", "ASC"]],
     });
 
     res.status(200).json({
@@ -52,7 +52,6 @@ const getAllTasks = async (req, res, next) => {
       data: result,
     });
   } catch (error) {
-    console.error(error);
     next(error);
   }
 };
@@ -74,22 +73,6 @@ const updateTask = async (req, res, next) => {
   }
 };
 
-const addSubTask = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const { title, done } = req.body;
-    await SubtaskModel.create({ title, done, TaskId: id });
-    res.status(200).json({
-      success: true,
-      message: "Added subtask",
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-
-
 const deleteTask = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -107,6 +90,5 @@ module.exports = {
   addTask,
   getAllTasks,
   updateTask,
-  addSubTask,
   deleteTask,
 };

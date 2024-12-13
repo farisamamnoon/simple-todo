@@ -1,4 +1,4 @@
-import { useEffect, useState,  } from "react";
+import { useEffect, useState } from "react";
 import { formatDate } from "../../utils/formatDate";
 import { SubTask } from "./subtask";
 import { Trash } from "lucide-react";
@@ -6,6 +6,7 @@ import { DeleteTask } from "./delete-task-model";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { request } from "../../utils/request";
 import { Notification, useNotification } from "../notification";
+import { useOptimistic } from "react";
 
 export const Task = ({ task }) => {
   const { notify, ...notifyProps } = useNotification();
@@ -17,7 +18,7 @@ export const Task = ({ task }) => {
   });
 
   //TODO: Somehow this is not working...
-  const [optiTask, addOptiTask] = (
+  const [optiTask, addOptiTask] = useOptimistic(
     task,
     (currTask, updatedTask) => {
       console.log({ ...currTask, ...updatedTask });
@@ -42,7 +43,9 @@ export const Task = ({ task }) => {
 
   return (
     <>
-      <div className={`bg-pink-200/80 rounded-lg shadow-md p-8 flex flex-col gap-2`}>
+      <div
+        className={`bg-pink-200/80 rounded-lg shadow-md p-8 flex flex-col gap-2`}
+      >
         <div className="flex flex-col-reverse md:flex-row justify-between gap-2">
           <h1 className="text-3xl flex gap-2 content-center">
             {optiTask.title}
@@ -53,11 +56,11 @@ export const Task = ({ task }) => {
             </button>
           </h1>
           <form action={updateAction}>
+            {isPending && (
+              <span className="text-black/50 text-sm">Pending...</span>
+            )}
             <button
-              className={`bg-pink-900 px-2 py-1 text-pink-100 rounded-md shadow${
-                optiTask.done && "bg-opacity-20"
-              } ${!optiTask.done && "hover:bg-opacity-80"}`}
-              disabled={isPending}
+              className={`bg-pink-900 px-2 py-1 text-pink-100 rounded-md shadow hover:bg-opacity-80 ${optiTask.done && 'bg-green-800'}`}
             >
               {optiTask.done ? "Completed" : "Mark Done"}
             </button>

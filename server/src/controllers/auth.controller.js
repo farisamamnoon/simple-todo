@@ -55,8 +55,6 @@ const login = async (req, res, next) => {
         },
       });
   } catch (error) {
-    console.error(error);
-
     next(error);
   }
 };
@@ -92,8 +90,6 @@ const register = async (req, res, next) => {
         },
       });
   } catch (error) {
-    console.error(error);
-
     if (error instanceof UniqueConstraintError) {
       error = new ApiError(409, "Username already exists");
     }

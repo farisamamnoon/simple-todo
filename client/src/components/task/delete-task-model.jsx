@@ -1,5 +1,4 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useTasks } from "../../queries/tasks";
 import { request } from "../../utils/request";
 
 export const DeleteTask = ({ id, onClose }) => {

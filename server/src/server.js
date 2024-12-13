@@ -1,21 +1,24 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const ApiError = require("./utils/ApiError.js");
-require("dotenv").config();
 const errorHandler = require("./middlewares/error-handler.middleware.js");
 const authRouter = require("./routers/auth.router.js");
 const tasksRouter = require("./routers/task.router.js");
 const dbInit = require("./utils/initDb.js");
-const UserModel = require("./models/user.model.js");
 const { authenticate } = require("./middlewares/auth.middleware.js");
 const subtaskRouter = require("./routers/subtask.router.js");
 
 const app = express();
+const origin =
+  process.env.STATUS === "production"
+    ? process.env.FRONTEND_PROD_URL
+    : process.env.FRONTEND_DEV_URL;
 
 app.use(
   cors({
-    origin: "https://todo-ljln.onrender.com",
+    origin,
     credentials: true,
   })
 );
@@ -38,5 +41,5 @@ app.use(errorHandler);
 
 app.listen(process.env.PORT, async () => {
   await dbInit();
-  console.log(`Your server is listening to ${process.env.PORT}`);
+  console.log(`Your server is listening to ${process.env.PORT || 8080}`);
 });
