@@ -5,6 +5,7 @@ import { request } from "../../utils/request";
 import { LogOut } from "lucide-react";
 import { AddTask } from "../../components/task/add-task-modal";
 import { Navigate, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 export const Dashboard = () => {
   const navigate = useNavigate();
@@ -16,7 +17,8 @@ export const Dashboard = () => {
   const { mutate } = useMutation({
     mutationFn: () => request("auth/logout", "POST"),
     onSuccess: () => {
-      document.cookie = "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      document.cookie =
+        "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       queryClient.clear();
       navigate("/auth/login");
     },
@@ -24,6 +26,12 @@ export const Dashboard = () => {
 
   if (isPending) return <Loading />;
   if (isError) return <Navigate to="/auth/login" />;
+
+  useEffect(
+    () => () =>
+      (document.cookie =
+        "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;")
+  );
 
   return (
     <div className="bg-primary-gradient bg-fixed bg-no-repeat min-w-screen min-h-screen py-20 px-10">
