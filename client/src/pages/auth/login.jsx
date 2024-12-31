@@ -1,30 +1,29 @@
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
-import { Notification, useNotification } from "../../components/notification";
 import { useMutation } from "@tanstack/react-query";
 import { Loading } from "../../components/loading";
 import { request } from "../../utils/request";
-import { useEffect } from "react";
-import { useSetUser } from "../../utils/auth";
+import { loginSchema, useSetUser } from "../../utils/auth";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Error } from "../../components/error";
 
 export const Login = () => {
-  const { notify, ...notifyProps } = useNotification();
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, formState } = useForm({
+    resolver: zodResolver(loginSchema),
+  });
   const setUser = useSetUser();
 
-  const mutation = useMutation({
+  const { isPending, isError, error, mutate } = useMutation({
     mutationFn: (values) => request("auth/login", "POST", values),
     onSuccess: setUser,
   });
 
-  useEffect(() => {
-    if (mutation.isError) {
-      console.log(mutation.error);
-      notify(mutation.error.message);
-    }
-  });
+  if (isError) {
+    console.log(error);
+    return <Error error={error} />;
+  }
 
-  if (mutation.isPending) {
+  if (isPending) {
     return <Loading />;
   }
 
@@ -35,7 +34,7 @@ export const Login = () => {
           Login to continue
         </h1>
         <form
-          onSubmit={handleSubmit((values) => mutation.mutate(values))}
+          onSubmit={handleSubmit((values) => mutate(values))}
           className="flex flex-col gap-8"
         >
           <div className="flex flex-col gap-4">
@@ -45,6 +44,9 @@ export const Login = () => {
               placeholder="Enter your username"
               className="bg-inherit shadow-lg px-4 py-2 text-blue-950 rounded-md"
             />
+            <p className="text-red-500 font-semibold">
+              {formState.errors?.userName?.message}
+            </p>
           </div>
           <div className="flex flex-col gap-4">
             <label className="text-blue-950">Password:</label>
@@ -54,11 +56,14 @@ export const Login = () => {
               placeholder="Enter your password"
               className="bg-inherit shadow-lg px-4 py-2 text-blue-950 rounded-md"
             />
+            <p className="text-red-500 font-semibold">
+              {formState.errors?.password?.message}
+            </p>
           </div>
           <button
             type="submit"
-            className="bg-primary px-4 py-2 text-white rounded-md mt-8"
-            disabled={mutation.isPending}
+            className="bg-primary px-4 py-2 text-white rounded-md mt-8 disabled:bg-opacity-50 disabled:pointer-events-none"
+            disabled={isPending}
           >
             Login
           </button>
@@ -67,7 +72,6 @@ export const Login = () => {
           </Link>
         </form>
       </div>
-      <Notification {...notifyProps} />
     </div>
   );
 };

@@ -51,7 +51,6 @@ const login = async (req, res, next) => {
         message: "User logged in successfully",
         data: {
           accessToken,
-          user,
         },
       });
   } catch (error) {
@@ -86,7 +85,6 @@ const register = async (req, res, next) => {
         message: "Login successfull",
         data: {
           accessToken,
-          user,
         },
       });
   } catch (error) {

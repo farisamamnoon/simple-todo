@@ -1,9 +1,5 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Navigate, useNavigate } from "react-router-dom";
 import { z } from "zod";
-import { Loading } from "../components/loading";
-import { Error } from "../components/error";
-import { request } from "./request";
 
 export const registerSchema = z
   .object({
@@ -17,28 +13,36 @@ export const registerSchema = z
   })
   .transform(({ userName, password }) => ({ userName, password }));
 
+export const loginSchema = z.object({
+  userName: z.string().min(1, "Required"),
+  password: z.string().min(1, "Required"),
+});
+
 export const useSetUser = () => {
   const navigate = useNavigate();
-  return () => {
+
+  return (data) => {
+    if (!data || !data?.accessToken) {
+      navigate("/auth/login");
+    }
+    localStorage.setItem("TODO_APP_USER", data.data.accessToken);
     navigate("/");
   };
 };
 
+export const useLogout = () => {
+  const navigate = useNavigate();
+
+  return () => {
+    localStorage.clear();
+    navigate("/auth/login");
+  };
+};
+
 export const ProtectedRoute = ({ children }) => {
-  const { data, isPending, isError } = useQuery({
-    queryKey: ["user"],
-    queryFn: () => request("auth/user", "GET"),
-  });
+  const user = localStorage.getItem("TODO_APP_USER");
 
-  if (isPending) {
-    return <Loading />;
-  }
-
-  if (isError) {
-    return <Navigate to={"auth/login"} />;
-  }
-
-  if (data.data.isAuthenticated) {
+  if (user) {
     return <>{children}</>;
   } else {
     return <Navigate to={"auth/login"} />;
