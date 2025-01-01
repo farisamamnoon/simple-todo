@@ -15,11 +15,9 @@ const origin =
   process.env.STATUS === "production"
     ? process.env.FRONTEND_PROD_URL
     : process.env.FRONTEND_DEV_URL;
-
 app.use(
   cors({
     origin,
-    credentials: true,
   })
 );
 app.use(express.json());
@@ -39,7 +37,7 @@ app.use((req, res, next) => {
 // Base error handler
 app.use(errorHandler);
 
-app.listen(process.env.PORT, async () => {
+app.listen(process.env.PORT, "0.0.0.0", async () => {
   await dbInit();
   console.log(`Your server is listening to ${process.env.PORT || 8080}`);
 });

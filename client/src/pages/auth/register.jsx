@@ -4,13 +4,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema, useSetUser } from "../../utils/auth";
 import { useMutation } from "@tanstack/react-query";
 import { request } from "../../utils/request";
-import { useNotification } from "../../components/notification";
-import { Notification } from "../../components/notification";
-import { useEffect } from "react";
+import { Error } from "../../components/error";
 
 export const Register = () => {
-  const { notify, ...notification } = useNotification();
-  const setUser = useSetUser()
+  const setUser = useSetUser();
 
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: (values) => request("auth/register", "POST", values),
@@ -25,11 +22,9 @@ export const Register = () => {
     mutate(values);
   };
 
-  useEffect(() => {
-    if (isError) {
-      notify(error.message);
-    }
-  }, [isError]);
+  if (isError) {
+    return <Error error={error} />;
+  }
 
   return (
     <div className="bg-primary-gradient w-screen h-screen grid place-content-center">
@@ -78,7 +73,7 @@ export const Register = () => {
           </div>
           <button
             type="submit"
-            className="bg-primary px-4 py-2 text-white rounded-md mt-8 hover:bg-opacity-90"
+            className="bg-primary px-4 py-2 text-white rounded-md mt-8 hover:bg-opacity-90 disabled:bg-opacity-50 disabled:pointer-events-none"
             disabled={isPending}
           >
             {isPending ? "Submitting" : "Create Account"}
@@ -87,7 +82,6 @@ export const Register = () => {
             Click here if you already have an account
           </Link>
         </form>
-        <Notification {...notification} />
       </div>
     </div>
   );

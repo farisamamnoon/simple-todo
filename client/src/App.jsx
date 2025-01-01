@@ -3,22 +3,34 @@ import { Dashboard } from "./pages/dash";
 import { Login } from "./pages/auth/login";
 import { Register } from "./pages/auth/register";
 import { ProtectedRoute } from "./utils/auth";
+import { ErrorBoundary } from "./components/Error-Boundary";
 
 const router = createBrowserRouter([
   {
     path: "/auth/login",
-    element: <Login />,
+    element: (
+      <ErrorBoundary>
+        <Login />
+      </ErrorBoundary>
+    ),
   },
   {
     path: "/auth/register",
-    element: <Register />,
+
+    element: (
+      <ErrorBoundary>
+        <Register />
+      </ErrorBoundary>
+    ),
   },
   {
     path: "/",
     element: (
-      <ProtectedRoute>
-        <Dashboard />
-      </ProtectedRoute>
+      <ErrorBoundary>
+        <ProtectedRoute>
+          <Dashboard />
+        </ProtectedRoute>
+      </ErrorBoundary>
     ),
   },
 ]);

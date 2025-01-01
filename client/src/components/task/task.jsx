@@ -1,15 +1,12 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { formatDate } from "../../utils/formatDate";
 import { SubTask } from "./subtask";
 import { Trash } from "lucide-react";
 import { DeleteTask } from "./delete-task-model";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { request } from "../../utils/request";
-import { Notification, useNotification } from "../notification";
-import { useOptimistic } from "react";
 
 export const Task = ({ task }) => {
-  const { notify, ...notifyProps } = useNotification();
   const [deleteTask, setDeleteTask] = useState({ toggle: false, id: "" });
   const queryClient = useQueryClient();
   const { mutate, isPending, isError, error } = useMutation({
@@ -17,29 +14,21 @@ export const Task = ({ task }) => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
   });
 
-  //TODO: Somehow this is not working...
-  const [optiTask, addOptiTask] = useOptimistic(
-    task,
-    (currTask, updatedTask) => {
-      console.log({ ...currTask, ...updatedTask });
-      return { ...currTask, ...updatedTask };
-    }
-  );
-
-  const updateAction = () => {
-    addOptiTask({ done: !optiTask.done });
+  const updateAction = async () => {
+    // await new Promise((res) => {
+    //   setTimeout(() => res(), 1000);
+    // });
     mutate({
-      ...optiTask,
-      subtasks: [...optiTask.subtasks],
-      done: !optiTask.done,
+      ...task,
+      subtasks: [...task.subtasks],
+      done: !task.done,
     });
   };
 
-  useEffect(() => {
-    if (isError) {
-      notify(error.message);
-    }
-  }, [isError]);
+  if (isError) {
+    //TODO: Fix this..
+    return <p>error..</p>;
+  }
 
   return (
     <>
@@ -48,31 +37,31 @@ export const Task = ({ task }) => {
       >
         <div className="flex flex-col-reverse md:flex-row justify-between gap-2">
           <h1 className="text-3xl flex gap-2 content-center">
-            {optiTask.title}
+            {task.title}
             <button
-              onClick={() => setDeleteTask({ toggle: true, id: optiTask.id })}
+              onClick={() => setDeleteTask({ toggle: true, id: task.id })}
             >
               <Trash size={20} className="text-red-900" />
             </button>
           </h1>
           <form action={updateAction}>
-            {isPending && (
-              <span className="text-black/50 text-sm">Pending...</span>
-            )}
             <button
-              className={`bg-pink-900 px-2 py-1 text-pink-100 rounded-md shadow hover:bg-opacity-80 ${optiTask.done && 'bg-green-800'}`}
+              className={`px-2 py-1 text-pink-100 rounded-md shadow hover:bg-opacity-80 disabled:bg-opacity-50 ${
+                task.done ? "bg-green-800" : "bg-pink-900"
+              }`}
+              disabled={isPending}
             >
-              {optiTask.done ? "Completed" : "Mark Done"}
+              {isPending ? "Loading..." : task.done ? "Completed" : "Mark Done"}
             </button>
           </form>
         </div>
         <p className="text-black text-opacity-75 text-lg">
-          Due on {formatDate(optiTask.dueDate)}
+          Due on {formatDate(task.dueDate)}
         </p>
-        <p>{optiTask.description}</p>
+        <p>{task.description}</p>
         <ul className="mt-2">
-          {optiTask.subtasks.map((subtask) => (
-            <SubTask {...subtask} key={subtask.id} addOptiTask={addOptiTask} />
+          {task.subtasks.map((subtask) => (
+            <SubTask {...subtask} key={subtask.id} />
           ))}
         </ul>
         {deleteTask.toggle && (
@@ -82,7 +71,6 @@ export const Task = ({ task }) => {
           />
         )}
       </div>
-      <Notification {...notifyProps} />
     </>
   );
 };
