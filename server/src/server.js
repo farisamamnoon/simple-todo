@@ -12,7 +12,7 @@ const subtaskRouter = require("./routers/subtask.router.js");
 
 const app = express();
 const origin =
-  process.env.NODE_ENV === "development"
+  process.env.STATUS === "development"
     ? process.env.FRONTEND_DEV_URL
     : process.env.FRONTEND_PROD_URL;
 app.use(

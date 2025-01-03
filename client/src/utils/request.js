@@ -17,7 +17,7 @@ export async function request(route, method = "GET", data, config) {
 
   if (data) options.body = JSON.stringify(data);
 
-  const response = await fetch(`/api/${route}`, options);
+  const response = await fetch(`https://todo-gcmh.onrender.com/api/${route}`, options);
 
   if (!response.ok) {
     const errorData = await response.json();
