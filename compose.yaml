@@ -1,0 +1,60 @@
+name: Todo
+
+services:
+  client:
+    container_name: todo-client
+    build:
+      context: client/
+    image: client-image
+    depends_on:
+      - api
+    ports:
+      - "80:80"
+    networks:
+      - todo-net
+
+  api:
+    container_name: todo-api
+    build:
+      context: server/
+    image: api-image
+    depends_on:
+      db:
+        condition: service_healthy
+        restart: true
+    env_file:
+      - .env.example
+    environment:
+      - NODE_ENV=production
+      - FRONTEND_PROD_URL=http://todo-client:80
+      - POSTGRES_HOST=todo-db
+    networks:
+      - todo-net
+
+  db:
+    container_name: todo-db
+    image: postgres:latest
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_PASSWORD=rootroot
+      - POSTGRES_DB=todo
+      - PGUSER=postgres
+    healthcheck:
+      test: ["CMD-SHELL", "psql", "SELECT 1;"]
+      interval: 10s
+      timeout: 20s
+      retries: 5
+    volumes:
+      - todo-db:/var/lib/postgresql/data
+    networks:
+      - todo-net
+
+volumes:
+  todo-db:
+    name: todo-data
+
+
+networks:
+  todo-net:
+    driver: bridge
